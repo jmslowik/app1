@@ -2,9 +2,9 @@ const HtmlWebPackPlugin = require("html-webpack-plugin");
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 
 const deps = require("./package.json").dependencies;
-module.exports = {
+module.exports = (_,  argv) => ({
   output: {
-    publicPath: "http://localhost:3001/",
+    publicPath: argv.mode === "production" ? "https://app1-jmslowik.vercel.app/" : "http://localhost:3001/",
   },
 
   resolve: {
@@ -44,8 +44,8 @@ module.exports = {
       name: "app1",
       filename: "remoteEntry.js",
       remotes: {
-        app2: 'app2@http://localhost:3002/remoteEntry.js',
-        app3: 'app3@http://localhost:3003/remoteEntry.js',
+        app2: `app2@${argv.mode === "production" ? "https://app2-jmslowik.vercel.app" : "http://localhost:3002"}/remoteEntry.js`,
+        app3: `app3@${argv.mode === "production" ? "https://app3-jmslowik.vercel.app" : "http://localhost:3003"}/remoteEntry.js`,
       },
       exposes: {},
       shared: {
@@ -64,4 +64,4 @@ module.exports = {
       template: "./src/index.html",
     }),
   ],
-};
+});
