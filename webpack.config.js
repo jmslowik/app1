@@ -44,10 +44,13 @@ module.exports = (_,  argv) => ({
       name: "app1",
       filename: "remoteEntry.js",
       remotes: {
+        app1: `app1@${argv.mode === "production" ? "https://app1-jmslowik.vercel.app" : "http://localhost:3001"}/remoteEntry.js`,
         app2: `app2@${argv.mode === "production" ? "https://app2-jmslowik.vercel.app" : "http://localhost:3002"}/remoteEntry.js`,
         app3: `app3@${argv.mode === "production" ? "https://app3-jmslowik.vercel.app" : "http://localhost:3003"}/remoteEntry.js`,
       },
-      exposes: {},
+      exposes: {
+        './MyContext': './src/MyContext'
+      },
       shared: {
         ...deps,
         react: {
