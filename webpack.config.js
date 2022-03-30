@@ -4,7 +4,7 @@ const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPl
 const deps = require("./package.json").dependencies;
 module.exports = (_,  argv) => ({
   output: {
-    publicPath: argv.mode === "production" ? "https://app1-jmslowik.vercel.app/" : "http://localhost:3001/",
+    publicPath: "/app1",
   },
 
   resolve: {
@@ -14,6 +14,18 @@ module.exports = (_,  argv) => ({
   devServer: {
     port: 3001,
     historyApiFallback: true,
+    proxy: {
+      '/app2': {
+        target: 'http://localhost:3001',
+        router: () => 'http://localhost:3002',
+        logLevel: 'debug',
+      },
+      '/app3': {
+        target: 'http://localhost:3001',
+        router: () => 'http://localhost:3003',
+        logLevel: 'debug',
+      },
+    },
   },
 
   module: {
@@ -44,9 +56,9 @@ module.exports = (_,  argv) => ({
       name: "app1",
       filename: "remoteEntry.js",
       remotes: {
-        app1: `app1@${argv.mode === "production" ? "https://app1-jmslowik.vercel.app" : "http://localhost:3001"}/remoteEntry.js`,
-        app2: `app2@${argv.mode === "production" ? "https://app2-jmslowik.vercel.app" : "http://localhost:3002"}/remoteEntry.js`,
-        app3: `app3@${argv.mode === "production" ? "https://app3-jmslowik.vercel.app" : "http://localhost:3003"}/remoteEntry.js`,
+        app1: `app1@/app1/remoteEntry.js`,
+        app2: `app2@/app2/remoteEntry.js`,
+        app3: `app3@/app3/remoteEntry.js`,
       },
       exposes: {
         './MyContext': './src/MyContext'
